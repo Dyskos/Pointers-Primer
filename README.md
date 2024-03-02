@@ -1,16 +1,17 @@
 Author: Adam Albee (FuriousProgrammer@gmail.com)
+Contributor: Christy Winslett (dyskos@proton.me)
 
 # A Primer on Pointers
 
 ## I. Intro
 
 For reasons I don't fully understand, many, many people have trouble understanding and conceptualizing **pointers** in programming languages that expose them directly.
-This primer aims to break down what pointers are, why they exist, and how they are and can be used.
+This primer aims to break down what pointers are, why they exist, and how they can be used.
 While the advice herein is applicable to *any* programming language that has pointers, all examples and explanations will revolve around the C language.
 
-## II. Defintions
+## II. Definitions
 
-A very important disctinction needs to be made before we begin: a **variable** refers to the "box" that *holds* a **value**.
+A very important distinction needs to be made before we begin: a **variable** refers to the "box" that *holds* a **value**.
 A value is, essentially, just a number.
 Values are the real "data" the flows inside the CPU.
 
@@ -21,7 +22,7 @@ Variables care about the size, whereas the encoding informs the compiler which s
 A **pointer** is a *type* of variable that "points" to something by holding the *value* of the "address" of that something.
 
 An **address** is a *value* that refers to some specific piece of hardware.
-Most addresses &mdash; nearly all, even &mdash; refer to somewhere in RAM.
+Most addresses &ndash; nearly all, even &ndash; refer to somewhere in RAM.
 *Everything* in your computer has an address, however!
 Some addresses can be read but not written to, some can be written to but not read, and some simply don't map to anything at all.
 
@@ -29,20 +30,20 @@ A pointer **degree** is the number of indirections a pointer has from its "base"
 
 An **array** is a contiguous list of multiple values of a specific type.
 In C, arrays are represented as a pointer to the first element in the array.
-Contiguous in the context of memory means that the values are all stored at adjacent addresses &mdash; in other words, there are no "gaps" between the values.
+Contiguous in the context of memory means that the values are all stored at adjacent addresses &ndash; in other words, there are no "gaps" between the values.
 
 A **vector** (or **matrix**) is an array that "knows" how many elements it has space for.
 See [IV. Advanced Syntax] for more info about this.
 
-A **buffer** is a container &mdash; typically a vector or array &mdash; for a process that cannot operate "one element at a time," or where it is more efficient to process elements *in bulk*.
-Many people use "array" and "buffer" interchangably, especially when referring to strings of `char`s.
+A **buffer** is a container &ndash; typically a vector or array &ndash; for a process that cannot operate "one element at a time," or where it is more efficient to process elements *in bulk*.
+Many people use "array" and "buffer" interchangeably, especially when referring to strings of `char`s.
 
 A **virtual address** is what your C programs are typically handling.
 Virtual addresses refer to hardware addresses *indirectly*, with the OS mediating the translation of virtual<->hardware.
 If you're writing an OS yourself and don't understand pointers already, God help you.
 
 A **segfault**, or Segmentation Fault, is a kind of error that occurs when the CPU tries to access an address it isn't allowed to.
-If you see SEGFAULT &mdash; you can immediately think "pointer error."
+If you see SEGFAULT &ndash; you can immediately think "pointer error."
 
 An **instruction**, or opcode (short for "operation code"), is a specific action that a CPU can do.
 
@@ -50,8 +51,8 @@ An **instruction**, or opcode (short for "operation code"), is a specific action
 
 There are three operators to understand when working with pointers: address-of `&`, indirection (aka dereference) `*`, and arrow-access `->`.
 
-- Address-of gets the address of a variable &mdash; effectively increasing the "degree" of a pointer by 1.
-- Indirection (Dereference) is the opposite &mdash; it accesses the *value pointed to* by the address a pointer is holding.
+- Address-of gets the address of a variable &ndash; effectively increasing the "degree" of a pointer by 1.
+- Indirection (Dereference) is the opposite &ndash; it accesses the *value pointed to* by the address a pointer is holding.
 - Arrow-access notation is a shortcut for accessing members of a struct or union (or object in C++) via a pointer to that object without having to dereference it.
 (E.g. `someStructPtr->member` is equivalent to `(*someStructPtr).member`).
 Frankly speaking, this operator is completely redundant and really doesn't need to exist.
@@ -68,15 +69,15 @@ char**  DegreeTwo   = &DegreeOne; // or &&value
 char*** DegreeThree = &DegreeTwo; // or &&DegreeOne or &&&value
 ```
 
-If you come from C++, the `&` used for pass-by-reference in function parameters *does not exist* in C, but is similary not an operator.
+If you come from C++, the `&` used for pass-by-reference in function parameters *does not exist* in C, but is similarly not an operator.
 
 ## IV. Advanced Syntax
 
-C uses what are known as "narrow pointers" &mdash; meaning that a pointer to a single variable and a pointer to an array of variables *look identical*.
+C uses what are known as "narrow pointers" &ndash; meaning that a pointer to a single variable and a pointer to an array of variables *look identical*.
 When vectors are passed to (or returned from) functions, their references "decay" into pointers.
 For all intents are purposes, all arrays *are* pointers and all pointers *are* arrays.
 
-It's impossible to figure out from the type alone if a `char*` is a pointer to a single `char` or a string &mdash; an array of `char`s!
+It's impossible to figure out from the type alone if a `char*` is a pointer to a single `char` or a string &ndash; an array of `char`s!
 
 Going one step further: it's not possible to determine from the type or variable alone if a `char**` is:
 - a pointer to a single pointer to a single `char`
@@ -105,9 +106,9 @@ size_t getLen( char* array ) {
 size_t len = getLen( vector ); // 4/1 or 8/1 - 32-bit mode or 64-bit mode depending
 ```
 
-You may recognize that *C Strings* are very oftened passed around *without* their length (E.g. `strlen`, `strcpy`, `strcmp`, etc.)!
+You may recognize that *C Strings* are very often passed around *without* their length (E.g. `strlen`, `strcpy`, `strcmp`, etc.)!
 This is because of a special formatting C Strings are given in the form of two restrictions: a valid C String (1) has no embedded `0`, aka `'\0'` aka `NULL` bytes and (2) has a `NULL` byte 1 past the end of the string itself.
-This is an example of a **sentinel** value &mdash; the string *cannot* contain `0`s because a `0` *means the end of the string*.
+This is an example of a **sentinel** value &ndash; the string *cannot* contain `0`s because a `0` *means the end of the string*.
 
 Importantly, the length of the *string* and the length of the *`char*`* buffer are *different*: the buffer is always at *least* 1 `char` longer than the maximum length of the string it contain.
 A "proper" C String specifically refers to `char*` *buffers* that hold a single string and are thus precisely as long as the length of that string plus 1, but this is a fairly unimportant restriction.
@@ -145,14 +146,14 @@ void AFunction( size_t len, char vector[len] ) {
 }
 ```
 
-<!-- TODO: figure out the sytnax for multi-dimensional vectors + explain type-casting a "flat" array to a multidimension vector -->
+<!-- TODO: figure out the syntax for multi-dimensional vectors + explain type-casting a "flat" array to a multidimensional vector -->
 
 ## V. Regular Old Variables (The Stack)
 
-It may come as a suprise to some, but (nearly) *all* variables use pointers under the hood! The CPU's registers are the only things that the CPU can *directly* perform computation on.
+It may come as a surprise to some, but (nearly) *all* variables use pointers under the hood! The CPU's registers are the only things that the CPU can *directly* perform computation on.
 Because there are a severely limited number of CPU registers (literally *dozens* of bytes in total!), the Stack is used to store additional values.
 
-Every variable in a program &mdash; local variables, function parameters, globals &mdash; ***everything*** &mdash; is in reality an **address** to their value stored on the Stack.
+Every variable in a program &ndash; local variables, function parameters, globals &ndash; ***everything*** &ndash; is in reality an **address** to their value stored on the Stack.
 The compiler handles how these values are organized, and generates the instructions that handle copying to and from the CPU registers completely automatically.
 
 A common mistake pointer-beginners often make is "returning a pointer to the Stack":
@@ -183,4 +184,4 @@ int main() {
 }
 ```
 
-<!-- TODO: talk about Stack Framess -->
+<!-- TODO: talk about Stack Frames -->
